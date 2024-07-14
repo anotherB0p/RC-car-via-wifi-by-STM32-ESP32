@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<body onkeydown="keydownFunction()" onkeyup="keyupFunction()">
+<style>
+  #parent {
+    margin-top: 100px;
+    padding: 10px;
+    width: 335px;
+    background-color: black;
+    border: 2px solid blue;
+    border-radius: 20px;
+  }
+
+  .wrapper {
+    text-align: center;
+  }
+
+  .arrow {
+    border: solid black;
+    border-width: 0 6px 6px 0;
+    display: inline-block;
+    padding: 6px;
+  }
+  .arrow.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
+  .arrow.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+  }
+  .arrow.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+  }
+  .arrow.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
+
+  .btn {
+    text-align: center;
+    border-radius: 20px;
+    border: 3px solid #73AD21;
+    width: 100px;
+    height: 100px;
+    font-size: 10px;
+    text-justify:auto;
+    margin: 2px;
+  }
+  .btn:hover {
+    background-color: gold;
+  }
+  .btn:active {
+    background-color: purple;
+  }
+</style>
+
+<h1>Keyboard Events</h1>
+<h2>The key Property</h2>
+<p>Press the "A" key on the keyboard in the input field!</p>
+<div id="parent">
+  <div class="wrapper">
+    <button type="button" id="ArrowUp_btn" class="btn"> <i class="arrow up"></i> </button>
+  </div>
+  <div class="wrapper">
+    <button type="button" id="ArrowLeft_btn" class="btn"> <i class="arrow left"></i> </button><button type="button" id="ArrowDown_btn" class="btn"> <i class="arrow down"></i> </button><button type="button" id="ArrowRight_btn" class="btn"> <i class="arrow right"></i>  </button>
+  </div>
+</div>
+
+<script>
+let dir = 0;
+const up_bit = 1;
+const left_bit = 2;
+const down_bit = 4;
+const right_bit = 8;
+const buttons = ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight"];
+const pressed = [];
+
+function keydownFunction() {
+
+  let key = event.key;
+  console.log('keydown');
+  if (buttons.includes(key) && !pressed.includes(key)) {
+    pressed.push(key);  
+    console.log(!pressed.includes(key));
+    switch(key) {
+
+      case 'ArrowUp':
+        dir += up_bit;
+        break;
+      case 'ArrowLeft':
+        dir += left_bit;
+        break;
+      case 'ArrowDown':
+        dir += down_bit;
+        break;
+      case 'ArrowRight':
+        dir += right_bit;
+        break;
+
+    }
+
+    document.getElementById(key + "_btn").style.backgroundColor = "#FF1493";
+      fetch("",
+      {
+          method: "PUT",
+          body: "direction=" + dir.toString(16) + "&b=0",    // Преобразование 4bit в один символ HEX, 
+          headers:                                          // b - buffer, для доп времени обработки на сервере
+          {"Content-Type": "application/x-www-form-urlencoded"}
+      }).then((response) => { });
+      console.log('kuk');
+    }
+}
+
+function keyupFunction() {
+  let key = event.key;
+  console.log('keyup');
+  console.log(pressed.includes(key));
+  if (buttons.includes(key)&&pressed.includes(key)) {
+    pressed.splice(pressed.indexOf(key), 1);
+    console.log(pressed.includes(key));
+    document.getElementById(key + "_btn").style.backgroundColor = "white";
+     switch(key) {
+
+      case 'ArrowUp':
+        dir -= up_bit;
+        break;
+      case 'ArrowLeft':
+        dir -= left_bit;
+        break;
+      case 'ArrowDown':
+        dir -= down_bit;
+        break;
+      case 'ArrowRight':
+        dir -= right_bit;
+        break;
+      default:
+        dir += 0;
+        break;
+
+    } 
+    fetch("",
+      {
+          method: "PUT",
+          body: "direction=" + dir.toString(16) + "&b=0",
+          headers: 
+          {"Content-Type": "application/x-www-form-urlencoded"}
+      }).then((response) => { });
+  }
+}
+
+</script>
+
+</body>
+</html>
